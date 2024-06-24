@@ -1,0 +1,82 @@
+function isTime1Bigger(time1, time2) {
+  function timeToMinutes(time) {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
+  const minutes1 = timeToMinutes(time1);
+  const minutes2 = timeToMinutes(time2);
+
+  if (minutes1 < minutes2) {
+    return false;
+  } else if (minutes1 >= minutes2) {
+    return true;
+  }
+}
+
+function getPriceFromItem(listItem) {
+  const pFull = listItem.getElementsByClassName(
+    "jqy9uelt jqy9ue1j jqy9ue16"
+  )[0];
+  const pPrice = listItem.getElementsByClassName(
+    "_14356at8 hf5y4v0 _14356at0"
+  )[0];
+  if (!pPrice && !pFull) throw new Error("pPrice and pFull not found");
+  if (pFull) return "full";
+  if (pPrice) {
+    const spans = pPrice.querySelectorAll("span");
+    const moneySpan = spans[1];
+    if (spans[1]) return moneySpan.innerText;
+  }
+}
+
+function getTimesOfTrip(listItem) {
+  const pTimes = listItem.getElementsByClassName("mumlx95");
+  if (pTimes.length < 2) throw new Error("Times not found");
+  return {
+    departure: pTimes[0].innerText,
+    arrival: pTimes[1].innerText,
+  };
+}
+
+function getOriginAndDestination(listItem) {
+  const origin = listItem.getElementsByClassName("mumlx97 mumlx98")[0];
+  const destination = listItem.getElementsByClassName("mumlx97")[1];
+  if (!origin || !destination)
+    throw new Error("Origin or destination not found");
+  return {
+    origin: origin.innerText,
+    destination: destination.innerText,
+  };
+}
+
+function mainLoop() {
+  const mainUl = document.getElementsByClassName("sc-c27d0bf9-0 klCLCw")[0];
+  if (!mainUl) throw new Error("Main UL not found");
+  const listItems = mainUl.getElementsByTagName("li");
+  for (const item of listItems) {
+    try {
+      const price = getPriceFromItem(item);
+      const times = getTimesOfTrip(item);
+      const { origin, destination } = getOriginAndDestination(item);
+      const tripDetails = `Trip: ${origin} ${times.departure} - ${destination} ${times.arrival} Price: ${price}`;
+      console.log(tripDetails);
+      if (
+        (origin === "Estrela" || origin === "Lajeado") &&
+        destination === "Santa Maria" &&
+        price !== "full" &&
+        times.departure &&
+        isTime1Bigger(times.departure, "14:00")
+      ) {
+        alert(`CARONA ENCONTRADA!\n${tripDetails}`);
+      }
+    } catch (error) {
+      continue;
+    }
+  }
+  console.log("No trips found trying again...");
+  const searchButton = document.getElementsByClassName("_4t205w0")[0];
+  searchButton.click();
+}
+
+setInterval(mainLoop, 5000);
