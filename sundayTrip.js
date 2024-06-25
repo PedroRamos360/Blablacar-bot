@@ -14,6 +14,25 @@ function isTime1Bigger(time1, time2) {
   }
 }
 
+function requestNotificationPermission() {
+  if (!("Notification" in window)) {
+    console.log("This browser does not support desktop notification");
+  } else if (Notification.permission === "granted") {
+    console.log("Permission to receive notifications has already been granted");
+  } else if (
+    Notification.permission !== "denied" ||
+    Notification.permission === "default"
+  ) {
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        console.log("Permission granted for notifications");
+      } else {
+        console.log("Permission denied for notifications");
+      }
+    });
+  }
+}
+
 function getPriceFromItem(listItem) {
   const pFull = listItem.getElementsByClassName(
     "jqy9uelt jqy9ue1j jqy9ue16"
@@ -51,32 +70,39 @@ function getOriginAndDestination(listItem) {
 }
 
 function mainLoop() {
-  const mainUl = document.getElementsByClassName("sc-c27d0bf9-0 klCLCw")[0];
-  if (!mainUl) throw new Error("Main UL not found");
-  const listItems = mainUl.getElementsByTagName("li");
-  for (const item of listItems) {
-    try {
-      const price = getPriceFromItem(item);
-      const times = getTimesOfTrip(item);
-      const { origin, destination } = getOriginAndDestination(item);
-      const tripDetails = `Trip: ${origin} ${times.departure} - ${destination} ${times.arrival} Price: ${price}`;
-      console.log(tripDetails);
-      if (
-        (origin === "Estrela" || origin === "Lajeado") &&
-        destination === "Santa Maria" &&
-        price !== "full" &&
-        times.departure &&
-        isTime1Bigger(times.departure, "14:00")
-      ) {
-        alert(`CARONA ENCONTRADA!\n${tripDetails}`);
+  try {
+    const mainUl = document.getElementsByClassName("sc-c27d0bf9-0 klCLCw")[0];
+    if (!mainUl) throw new Error("Main UL not found");
+    const listItems = mainUl.getElementsByTagName("li");
+    for (const item of listItems) {
+      try {
+        const price = getPriceFromItem(item);
+        const times = getTimesOfTrip(item);
+        const { origin, destination } = getOriginAndDestination(item);
+        const tripDetails = `Trip: ${origin} ${times.departure} - ${destination} ${times.arrival} Price: ${price}`;
+        console.log(tripDetails);
+        if (
+          (origin === "Estrela" || origin === "Lajeado") &&
+          destination === "Santa Maria" &&
+          price !== "full" &&
+          times.departure &&
+          isTime1Bigger(times.departure, "14:00")
+        ) {
+          console.log("CARONA ENCONTRADA!");
+          new Notification("Carona encontrada!\n" + tripDetails);
+        }
+      } catch (error) {
+        continue;
       }
-    } catch (error) {
-      continue;
     }
+  } catch (error) {
+    console.error(error);
   }
   console.log("No trips found trying again...");
   const searchButton = document.getElementsByClassName("_4t205w0")[0];
   searchButton.click();
 }
 
-setInterval(mainLoop, 5000);
+requestNotificationPermission();
+setInterval(mainLoop, 15000);
+
