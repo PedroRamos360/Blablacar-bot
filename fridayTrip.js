@@ -101,6 +101,7 @@ function mainLoop() {
   console.log("No trips found trying again...");
   const searchButton = document.getElementsByClassName("_4t205w0")[0];
   searchButton.click();
+  setTimeout(() => window.scrollTo(0, 5000), 2000);
 }
 
 requestNotificationPermission();
