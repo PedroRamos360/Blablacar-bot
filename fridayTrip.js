@@ -82,11 +82,11 @@ function mainLoop() {
         const tripDetails = `Trip: ${origin} ${times.departure} - ${destination} ${times.arrival} Price: ${price}`;
         console.log(tripDetails);
         if (
-          origin === "Santa Maria" &&
-          (destination === "Estrela" || destination === "Lajeado") &&
+          origin.includes("Santa Maria") &&
+          (destination.includes("Estrela") || destination.includes("Lajeado")) &&
           price !== "full" &&
           times.departure &&
-          isTime1Bigger(times.departure, "18:00")
+          isTime1Bigger(times.departure, "15:59")
         ) {
           console.log("CARONA ENCONTRADA!");
           new Notification("Carona encontrada!\n" + tripDetails);
