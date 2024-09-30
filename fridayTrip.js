@@ -71,7 +71,7 @@ function getOriginAndDestination(listItem) {
 
 function mainLoop() {
   try {
-    const mainUl = document.getElementsByClassName("sc-c27d0bf9-0 klCLCw")[0];
+    const mainUl = document.getElementsByClassName("sc-92a9d47-0 fmsejB")[0];
     if (!mainUl) throw new Error("Main UL not found");
     const listItems = mainUl.getElementsByTagName("li");
     for (const item of listItems) {
