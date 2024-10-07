@@ -1,3 +1,9 @@
+const tripData = {
+  origins: ["Santa Maria"],
+  destinations: ["Estrela", "Lajeado"],
+  timeBiggerThan: "15:59",
+};
+
 function isTime1Bigger(time1, time2) {
   function timeToMinutes(time) {
     const [hours, minutes] = time.split(":").map(Number);
@@ -81,13 +87,7 @@ function mainLoop() {
         const { origin, destination } = getOriginAndDestination(item);
         const tripDetails = `Trip: ${origin} ${times.departure} - ${destination} ${times.arrival} Price: ${price}`;
         console.log(tripDetails);
-        if (
-          origin.includes("Santa Maria") &&
-          (destination.includes("Estrela") || destination.includes("Lajeado")) &&
-          price !== "full" &&
-          times.departure &&
-          isTime1Bigger(times.departure, "15:59")
-        ) {
+        if (isTripValid(origin, destination, price, times.departure)) {
           console.log("CARONA ENCONTRADA!");
           new Notification("Carona encontrada!\n" + tripDetails);
         }
@@ -102,6 +102,22 @@ function mainLoop() {
   const searchButton = document.getElementsByClassName("_4t205w0")[0];
   searchButton.click();
   setTimeout(() => window.scrollTo(0, 5000), 2000);
+}
+
+function isTripValid(origin, destination, price, departureTime) {
+  const originCorrect = tripData.origins.some((tripOrigin) =>
+    origin.includes(tripOrigin)
+  );
+  const destinationCorrect = tripData.destinations.some((tripDestination) =>
+    destination.includes(tripDestination)
+  );
+  return (
+    originCorrect &&
+    destinationCorrect &&
+    price !== "full" &&
+    departureTime &&
+    isTime1Bigger(departureTime, tripData.timeBiggerThan)
+  );
 }
 
 requestNotificationPermission();
