@@ -56,7 +56,7 @@ function getPriceFromItem(listItem) {
 }
 
 function getTimesOfTrip(listItem) {
-  const pTimes = listItem.getElementsByClassName("mumlx95");
+  const pTimes = listItem.getElementsByClassName("_1uhfo5t5");
   if (pTimes.length < 2) throw new Error("Times not found");
   return {
     departure: pTimes[0].innerText,
